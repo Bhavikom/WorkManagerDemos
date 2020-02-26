@@ -9,6 +9,9 @@ import alarmmanager.com.workmanagercustomdemo.data.DatabaseHelper;
 import androidx.work.Data;
 import androidx.work.Worker;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class WorkService extends Worker {
 
     public static String url = "https://us-central1-zoftino-stores.cloudfunctions.net/";
@@ -26,14 +29,22 @@ public class WorkService extends Worker {
 
         dbManager = new DBManager(context);
         dbManager.open();
+
+        /* storing in database in background */
+        Date today = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyyy hh:mm:ss a");
+        String dateToStr = format.format(today);
+
+        dbManager.insert(dateToStr, "WorkManagerApi15Min");
+
         //get coupon and update local db using okhttp and room
         //run on a separate thread
-        CouponsAPI couponsAPI = new CouponsAPI(url, context,dbManager);
+        /*CouponsAPI couponsAPI = new CouponsAPI(url, context,dbManager);
         try {
             couponsAPI.callService();
         }catch (Exception e){
             Log.e("refresh cpn work", "failed to refresh coupons");
-        }
+        }*/
 
         //sending data to the caller
         Data refreshTime = new Data.Builder()
